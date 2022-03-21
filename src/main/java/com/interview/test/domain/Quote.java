@@ -1,11 +1,13 @@
-package com.interview.test.model;
+package com.interview.test.domain;
 
 import java.util.Date;
 import java.util.List;
 
 public class Quote {
+	
 	private Date date;	
 	private List<Currency> listCurrency;
+	
 	public Date getDate() {
 		return date;
 	}

@@ -1,4 +1,4 @@
-package com.interview.test.dao.impl;
+package com.interview.test.repository.impl;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,18 +9,24 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import com.interview.test.model.Currency;
-import com.interview.test.model.Quote;
+import com.interview.test.domain.Currency;
+import com.interview.test.domain.Quote;
+import com.interview.test.repository.ExchangeDAO;
 
 @Repository
-public class ExchangeDAOImpl {
+public class ExchangeDAOImpl implements ExchangeDAO{
 
-	public List<Quote> init() throws IOException{
+	private final Logger logger = LoggerFactory.getLogger(ExchangeDAOImpl.class);
+	
+	public List<Quote> getAll(){
 		List<Quote> result = new ArrayList<Quote>();
-	    BufferedReader br = new BufferedReader(new FileReader(new File("C:\\temp\\eurofxref-hist.csv")));
-	    try {
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader(new File("C:\\temp\\eurofxref-hist.csv")));
 	        // Read first line
 	    	String line;
 	        String[] currencyTitle = br.readLine().split(",");
@@ -31,15 +37,17 @@ public class ExchangeDAOImpl {
 	            try {
 	                // Convert data to person record
 	                Quote quote = new Quote();
-	                quote.setListCurrency(new ArrayList<Currency>());
 	                quote.setDate(new SimpleDateFormat("yyyy-MM-dd").parse(items[0]));
+	                List<Currency> list = new ArrayList<Currency>();
 	                for(int i = 1; i<items.length; i++) {
 	                	Currency c = new Currency();
-	                	c.setCurrency(currencyTitle[i]);
+	                	c.setName(currencyTitle[i]);
 	                	c.setValue(items[i]);
-	                	quote.getListCurrency().add(c);
+	                	list.add(c);
 	                }
+	                quote.setListCurrency(list);
 	                result.add(quote);
+	                br.close();
 	            } catch (ArrayIndexOutOfBoundsException|NumberFormatException|NullPointerException | ParseException e) {
 	                // Caught errors indicate a problem with data format -> Print warning and continue
 	                System.out.println("Invalid line: "+ line);
@@ -47,9 +55,11 @@ public class ExchangeDAOImpl {
 	        	
 	        }
 	        return result;
-	    } finally {
-	        br.close();
+	    } catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 	    }
+		return result;
 	}
 
 }

@@ -1,13 +1,13 @@
-package com.interview.test.controller;
+package com.interview.test.resource;
 
 import java.util.Date;
 
-import com.interview.test.model.Currency;
-import com.interview.test.model.Quote;
+import com.interview.test.domain.Currency;
+import com.interview.test.domain.Quote;
 
-public interface ExchangeController {
+public interface ExchangeResource {
 	
-	Quote getQuote(String date);
+	Quote getQuote(Date date);
 	Double exchangeCurrency(Date date, String sourceCurrency, String targetCurrency, Double amount);
 	Currency getHighestReference(Date startDate, Date endDate, String currency);
 	Double getAverage(Date startDate, Date endDate, String currency);
